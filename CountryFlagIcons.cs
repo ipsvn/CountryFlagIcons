@@ -31,7 +31,6 @@ public partial class CountryFlagPlugin : BasePlugin
 
         RegisterListener<Listeners.OnClientConnected>(OnClientConnected);
 
-        RegisterListener<Listeners.OnTick>(OnTick);
         AddCommand("css_cftest", "css_cftest", (player, info) =>
         {
             if (!Helpers.IsValidPlayer(player))
@@ -74,16 +73,16 @@ public partial class CountryFlagPlugin : BasePlugin
         }
 
         Logger.LogInformation($"Update player badge for {player.PlayerName}");
-        if (!g_PlayerCountries.TryGetValue(player.Slot, out var id))
+        if (!g_PlayerCountries.TryGetValue(player.Slot, out var code))
         {
             Logger.LogWarning($"No player country for {player.PlayerName}");
             return;
         }
 
-        if (!CountryIconsMap.TryGetValue(id, out var badgeId))
+        if (!CountryIconsMap.TryGetValue(code, out var badgeId))
         {
-            Logger.LogWarning($"No country flag badge id for {id}");
-            return;
+            badgeId = DefaultCountryIcon;
+            Logger.LogWarning($"No country flag badge id for {code}");
         }
 
         Logger.LogInformation($"badge id for {player.PlayerName} = {badgeId}");
@@ -108,7 +107,7 @@ public partial class CountryFlagPlugin : BasePlugin
     public HookResult OnEventPlayerTeam(EventPlayerTeam @event, GameEventInfo info)
     {
         var player = @event.Userid;
-        Server.NextFrame(() =>
+        AddTimer(0.1f, () =>
         {
             UpdatePlayerBadgeId(player);
         });
@@ -126,16 +125,6 @@ public partial class CountryFlagPlugin : BasePlugin
 
         g_PlayerCountries.Remove(disconnectEvent.Userid.Slot);
         return HookResult.Continue;
-    }
-
-
-    public void OnTick()
-    {
-        // foreach (var playerCountry in g_PlayerCountries)
-        // {
-        //     var player = Utilities.GetPlayerFromSlot(playerCountry.Key);
-        //     UpdatePlayerBadgeId(player);
-        // }
     }
 
 }

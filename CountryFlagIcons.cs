@@ -2,6 +2,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
 using MaxMind.GeoIP2;
 using Microsoft.Extensions.Logging;
 
@@ -31,23 +32,7 @@ public partial class CountryFlagPlugin : BasePlugin
 
         RegisterListener<Listeners.OnClientConnected>(OnClientConnected);
 
-        AddCommand("css_cftest", "css_cftest", (player, info) =>
-        {
-            if (!Helpers.IsValidPlayer(player))
-            {
-                return;
-            }
-
-            player.PrintToChat($"Your current country code: {g_PlayerCountries[player.Slot]}");
-
-            var wantedCountry = info.GetArg(1);
-            if (!string.IsNullOrEmpty(wantedCountry))
-            {
-                g_PlayerCountries[player.Slot] = wantedCountry;
-                UpdatePlayerBadgeId(player);
-                player.PrintToChat($"Your new country code: {wantedCountry}");
-            }
-        });
+        Memory.CCSPlayerController_InventoryUpdateThink.Hook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Pre);
     }
 
     private void UpdatePlayerCountryCode(CCSPlayerController player)
@@ -85,7 +70,7 @@ public partial class CountryFlagPlugin : BasePlugin
             Logger.LogWarning($"No country flag badge id for {code}");
         }
 
-        Logger.LogInformation($"badge id for {player.PlayerName} = {badgeId}");
+        Logger.LogInformation($"Badge id for {player.PlayerName} = {badgeId}");
 
         player.InventoryServices.Rank[5] = (MedalRank_t) badgeId;
         Utilities.SetStateChanged(player, "CCSPlayerController", "m_pInventoryServices");
@@ -101,6 +86,14 @@ public partial class CountryFlagPlugin : BasePlugin
         }
 
         UpdatePlayerCountryCode(player);
+    }
+
+    public HookResult CCSPlayerController_InventoryUpdateThink_Hook(DynamicHook hook)
+    {
+        Logger.LogInformation("CCSPlayerController_InventoryUpdateThink hook called");
+        var player = hook.GetParam<CCSPlayerController>(0);
+        UpdatePlayerBadgeId(player);
+        return HookResult.Continue;
     }
 
     [GameEventHandler]

@@ -32,7 +32,7 @@ public partial class CountryFlagPlugin : BasePlugin
 
         RegisterListener<Listeners.OnClientConnected>(OnClientConnected);
 
-        Memory.CCSPlayerController_InventoryUpdateThink.Hook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Pre);
+        Memory.CCSPlayerController_InventoryUpdateThink.Hook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Post);
     }
 
     private void UpdatePlayerCountryCode(CCSPlayerController player)

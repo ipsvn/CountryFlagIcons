@@ -17,6 +17,7 @@ public partial class CountryFlagPlugin
         }
 
         player.PrintToChat($"Your current country code: {g_PlayerCountries[player.Slot]}");
+        player.PrintToChat($"used id: {player.InventoryServices?.Rank[5]}");
 
         var wantedCountry = info.GetArg(1);
         if (!string.IsNullOrEmpty(wantedCountry))

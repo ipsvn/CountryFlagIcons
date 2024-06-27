@@ -100,6 +100,11 @@ public partial class CountryFlagPlugin : BasePlugin
     public HookResult OnEventPlayerTeam(EventPlayerTeam @event, GameEventInfo info)
     {
         var player = @event.Userid;
+        if (player == null || !player.IsValid)
+        {
+            return HookResult.Continue;
+        }
+
         AddTimer(0.1f, () =>
         {
             UpdatePlayerBadgeId(player);
@@ -111,12 +116,13 @@ public partial class CountryFlagPlugin : BasePlugin
     [GameEventHandler]
     public HookResult OnPlayerDisconnect(EventPlayerDisconnect disconnectEvent, GameEventInfo info)
     {
-        if (!disconnectEvent.Userid.IsValid || disconnectEvent.Userid.IsBot)
+        var player = disconnectEvent.Userid;
+        if (player == null || !player.IsValid || player.IsBot)
         {
             return HookResult.Continue;
         }
 
-        g_PlayerCountries.Remove(disconnectEvent.Userid.Slot);
+        g_PlayerCountries.Remove(player.Slot);
         return HookResult.Continue;
     }
 

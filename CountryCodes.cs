@@ -3,7 +3,7 @@ namespace CountryFlagIcons;
 public partial class CountryFlagPlugin
 {
     public const int DefaultCountryIcon = 1079;
-    public static Dictionary<string, int> CountryIconsMap = new Dictionary<string, int>
+    public static readonly Dictionary<string, int> CountryIconsMap = new Dictionary<string, int>
     {
         { "NL", 1004 },
         { "BQ", 1004 },

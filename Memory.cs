@@ -6,5 +6,5 @@ namespace CountryFlagIcons;
 public static class Memory
 {
     public static readonly MemoryFunctionVoid<CCSPlayerController, IntPtr, IntPtr, IntPtr> CCSPlayerController_InventoryUpdateThink = 
-        new(@"\x48\x8B\xBF\xB0\x09\x00\x00\xE9");
+        new("48 8B BF 40 0A 00 00 E9");
 }

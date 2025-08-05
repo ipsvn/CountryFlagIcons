@@ -32,7 +32,26 @@ public partial class CountryFlagPlugin : BasePlugin
 
         RegisterListener<Listeners.OnClientConnected>(OnClientConnected);
 
-        Memory.CCSPlayerController_InventoryUpdateThink.Hook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Post);
+        try
+        {
+            Memory.CCSPlayerController_InventoryUpdateThink.Hook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Post);
+        }
+        catch(Exception)
+        {
+            Logger.LogWarning("Failed to hook InventoryUpdateThink, the icon may randomly disappear.");
+        } 
+    }
+
+    public void Unload(bool hotReload)
+    {
+        try
+        {
+            Memory.CCSPlayerController_InventoryUpdateThink.Unhook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Post);
+        }
+        catch(Exception)
+        {
+
+        } 
     }
 
     private void UpdatePlayerCountryCode(CCSPlayerController player)

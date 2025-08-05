@@ -22,8 +22,7 @@ public partial class CountryFlagPlugin : BasePlugin
         if (hotReload)
         {
             var players = Utilities.GetPlayers().Where(u =>
-                Helpers.IsValidPlayer(u)
-                && u.Connected == PlayerConnectedState.PlayerConnected);
+                Helpers.IsValidPlayer(u));
             foreach (var player in players)
             {
                 UpdatePlayerCountryCode(player);
@@ -42,7 +41,7 @@ public partial class CountryFlagPlugin : BasePlugin
         } 
     }
 
-    public void Unload(bool hotReload)
+    public override void Unload(bool hotReload)
     {
         try
         {

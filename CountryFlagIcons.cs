@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Runtime.InteropServices;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
@@ -11,7 +12,7 @@ namespace CountryFlagIcons;
 public partial class CountryFlagPlugin : BasePlugin
 {
     public override string ModuleName => "Country Flag Icons";
-    public override string ModuleVersion => "1.0";
+    public override string ModuleVersion => "1.1";
     public override string ModuleAuthor => "svn, hASVAN";
     public override string ModuleDescription => "Shows country flags in the scoreboard";
 
@@ -33,7 +34,7 @@ public partial class CountryFlagPlugin : BasePlugin
 
         try
         {
-            Memory.CCSPlayerController_InventoryUpdateThink.Hook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Post);
+            Memory.InventoryUpdateThink.Hook(InventoryUpdateThink_Hook, HookMode.Post);
         }
         catch(Exception)
         {
@@ -45,7 +46,7 @@ public partial class CountryFlagPlugin : BasePlugin
     {
         try
         {
-            Memory.CCSPlayerController_InventoryUpdateThink.Unhook(CCSPlayerController_InventoryUpdateThink_Hook, HookMode.Post);
+            Memory.InventoryUpdateThink.Unhook(InventoryUpdateThink_Hook, HookMode.Post);
         }
         catch(Exception)
         {
@@ -106,11 +107,14 @@ public partial class CountryFlagPlugin : BasePlugin
         UpdatePlayerCountryCode(player);
     }
 
-    public HookResult CCSPlayerController_InventoryUpdateThink_Hook(DynamicHook hook)
+    public HookResult InventoryUpdateThink_Hook(DynamicHook hook)
     {
         Logger.LogInformation("CCSPlayerController_InventoryUpdateThink hook called");
-        var player = hook.GetParam<CCSPlayerController>(0);
-        UpdatePlayerBadgeId(player);
+        var player = new CCSPlayerController(Marshal.ReadIntPtr(hook.GetParam<nint>(0), 0x30));
+        if (player.IsValid)
+        {
+            UpdatePlayerBadgeId(player);
+        }
         return HookResult.Continue;
     }
 

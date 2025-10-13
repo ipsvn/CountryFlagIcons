@@ -27,6 +27,7 @@ jobs:
           mv ./bin/Debug/net8.0/publish/CountryFlagIcons.dll output/CountryFlagIcons/
           mv ./bin/Debug/net8.0/publish/CountryFlagIcons.pdb output/CountryFlagIcons/
           mv ./bin/Debug/net8.0/publish/MaxMind.GeoIP2.dll output/CountryFlagIcons/
+          mv ./bin/Debug/net8.0/publish/MaxMind.Db.dll output/CountryFlagIcons/
       - name: Publish artifact
         uses: actions/upload-artifact@v4
         with:

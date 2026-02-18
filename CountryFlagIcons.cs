@@ -56,13 +56,23 @@ public partial class CountryFlagPlugin : BasePlugin
 
     private void UpdatePlayerCountryCode(CCSPlayerController player)
     {
-        var ip = player.IpAddress!;
+        var ipString = player.IpAddress;
+        if (string.IsNullOrWhiteSpace(ipString))
+        {
+            return;
+        }
+
+        // The IP address string can actually be a SteamID when the player connects via SDR.
+        if (!IPAddress.TryParse(ipString.Split(":")[0], out var ip))
+        {
+            return;
+        }
 
         using var reader = new DatabaseReader(
             Path.Combine(ModulePath, "../GeoLite2-City.mmdb")
         );
 
-        if (reader.TryCity(IPAddress.Parse(ip.Split(':')[0]), out var response))
+        if (reader.TryCity(ip, out var response))
         {
             var countryCode = response!.Country.IsoCode ?? string.Empty;
             g_PlayerCountries[player.Slot] = countryCode;
